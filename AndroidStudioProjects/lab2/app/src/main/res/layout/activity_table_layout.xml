@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:stretchColumns="1">
+
+    <!-- Pierwszy wiersz: Czas -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <TextView
+            android:text="Time"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:text="8:41 AM"
+            android:gravity="end" />
+    </TableRow>
+
+    <!-- Drugi wiersz: Imię -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <TextView
+            android:text="First Name"
+            android:layout_gravity="center_vertical" />
+
+        <EditText />
+    </TableRow>
+
+    <!-- Trzeci wiersz: Nazwisko -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <TextView
+            android:text="Last Name"
+            android:layout_gravity="center_vertical" />
+
+        <EditText />
+    </TableRow>
+
+    <!-- Czwarty wiersz: Ocena -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <TextView
+            android:text="any text"
+            android:layout_gravity="center_vertical" />
+
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="1.0" />
+    </TableRow>
+
+
+    <!-- Piąty wiersz: Przycisk SUBMIT -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_span="2"
+            android:layout_gravity="center"
+            android:text="SUBMIT" />
+    </TableRow>
+
+</TableLayout>
