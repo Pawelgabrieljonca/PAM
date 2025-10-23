@@ -5,7 +5,6 @@
     android:padding="16dp"
     android:stretchColumns="1">
 
-    <!-- Pierwszy wiersz: Czas -->
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +19,6 @@
             android:gravity="end" />
     </TableRow>
 
-    <!-- Drugi wiersz: Imię -->
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,10 +28,12 @@
             android:text="First Name"
             android:layout_gravity="center_vertical" />
 
-        <EditText />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName" />
     </TableRow>
 
-    <!-- Trzeci wiersz: Nazwisko -->
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,28 +43,30 @@
             android:text="Last Name"
             android:layout_gravity="center_vertical" />
 
-        <EditText />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName" />
     </TableRow>
 
-    <!-- Czwarty wiersz: Ocena -->
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp">
 
         <TextView
-            android:text="any text"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:text="any text" />
 
         <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:numStars="5"
-            android:stepSize="1.0" />
-    </TableRow>
+            android:stepSize="1.0"
+            android:layout_gravity="center_vertical|start"
+            style="?android:attr/ratingBarStyleSmall" /> </TableRow>
 
 
-    <!-- Piąty wiersz: Przycisk SUBMIT -->
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_span="2"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal"
             android:text="SUBMIT" />
     </TableRow>
 
