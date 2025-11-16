@@ -12,7 +12,7 @@ import java.util.Random
 class HarderListsActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private var mAdapter: CarsAdapter? = null
+    private var mAdapter: SimpleCarsAdapter? = null
     private val wybor: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,32 +21,27 @@ class HarderListsActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recycler_view)
 
-        // --- Start of changes ---
-
         val possibleCars = arrayOf(
             "Toyota", "BMW", "Audi", "Mercedes", "Ford",
             "Honda", "Tesla", "Volkswagen", "Volvo", "Mazda"
         )
         val rand = Random()
 
-        // Create a MutableList of Car objects instead of an Array of Strings
+        // Tworzymy dummy imageResId (nie będziemy go używać)
         val cars = MutableList(30) {
             val carName = "${possibleCars[rand.nextInt(possibleCars.size)]} ${it + 1}"
-            Car(carName) // Create a Car object
+            Car(carName, R.drawable.ic_launcher_foreground) // dummy
         }
-
-        // --- End of changes ---
-
 
         if (wybor) {
             val mLayoutManager = GridLayoutManager(applicationContext, 4)
             recyclerView.layoutManager = mLayoutManager
             recyclerView.itemAnimator = DefaultItemAnimator()
-            mAdapter = CarsAdapter(cars) // Now passing the correct type
+            mAdapter = SimpleCarsAdapter(cars) // Używamy SimpleCarsAdapter
             recyclerView.adapter = mAdapter
         } else {
             recyclerView.layoutManager = LinearLayoutManager(this)
-            mAdapter = CarsAdapter(cars) // Now passing the correct type
+            mAdapter = SimpleCarsAdapter(cars) // Używamy SimpleCarsAdapter
             recyclerView.adapter = mAdapter
         }
     }
