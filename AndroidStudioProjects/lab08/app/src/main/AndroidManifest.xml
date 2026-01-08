@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="pbs.edu.lab08"> <uses-permission android:name="android.permission.SEND_SMS" />
+    package="pbs.edu.lab08">
+
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/> <application
+
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+
+    <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="Lab 8"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Lab08">
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -18,6 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

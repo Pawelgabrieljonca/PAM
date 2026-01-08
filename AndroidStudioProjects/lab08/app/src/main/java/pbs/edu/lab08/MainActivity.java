@@ -6,13 +6,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -20,9 +17,7 @@ import com.google.android.gms.location.LocationServices;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
-    private static final int PERMISSION_REQUEST_CODE = 100;
-    private ListView listView;
+    private SensorManager sensorManager;
     private List<Sensor> sensorList;
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -31,118 +26,62 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = findViewById(R.id.sensorListView);
-        Button btnSend = findViewById(R.id.btnSendSms);
+        // 1. Obsługa uprawnień [cite: 55]
+        checkPermissions();
 
-        // Inicjalizacja klienta lokalizacji
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        // Sprawdzenie i żądanie uprawnień na starcie [cite: 56, 91]
-        checkAndRequestPermissions();
-
-        // Pobranie i wyświetlenie sensorów [cite: 50, 51]
-        loadSensors();
-
-        btnSend.setOnClickListener(v -> prepareAndSendSms());
-    }
-
-    private void loadSensors() {
-        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        // 2. Pobieranie listy sensorów [cite: 14, 48]
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorList = sensorManager.getSensorList(Sensor.TYPE_ALL);
+
+        // 3. Konfiguracja ListView
+        ListView listView = findViewById(R.id.sensorListView);
         SensorAdapter adapter = new SensorAdapter(this, sensorList);
         listView.setAdapter(adapter);
+
+        // 4. Inicjalizacja klienta lokalizacji [cite: 53]
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // 5. Obsługa przycisku SMS [cite: 16, 51]
+        findViewById(R.id.btnSendSms).setOnClickListener(v -> prepareAndSendSms());
     }
 
-    private void checkAndRequestPermissions() {
-        String[] permissions = {
-                Manifest.permission.SEND_SMS,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-        };
-
-        if (!hasPermissions(permissions)) {
-            ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+    private void checkPermissions() {
+        String[] perms = {Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION};
+        if (ActivityCompat.checkSelfPermission(this, perms[0]) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, perms[1]) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, perms, 101);
         }
     }
 
-    private boolean hasPermissions(String[] permissions) {
-        for (String permission : permissions) {
-            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // Obsługa wyniku żądania uprawnień
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            boolean allGranted = true;
-            if (grantResults.length > 0) {
-                for (int result : grantResults) {
-                    if (result != PackageManager.PERMISSION_GRANTED) {
-                        allGranted = false;
-                        break;
-                    }
-                }
-            } else {
-                allGranted = false;
-            }
-
-            if (!allGranted) {
-                Toast.makeText(this, "Wymagane uprawnienia zostały odrzucone. Zamykanie aplikacji.", Toast.LENGTH_LONG).show();
-                finish(); // Zamknij aplikację jeśli brak uprawnień
-            }
+        // Jeśli użytkownik odmówi uprawnień, aplikacja się zamyka [cite: 21, 55]
+        if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            finish();
         }
     }
 
     private void prepareAndSendSms() {
-        // Sprawdzamy uprawnienia ponownie przed akcją
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Brak uprawnień do lokalizacji", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+                StringBuilder sb = new StringBuilder("Lista sensorów:\n");
+                for (Sensor s : sensorList) sb.append("- ").append(s.getName()).append("\n");
 
-        // Pobranie ostatniej lokalizacji [cite: 54, 89]
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, location -> {
-                    String locationText = "Lokalizacja nieznana";
-                    String mapLink = "";
+                if (location != null) {
+                    double lat = location.getLatitude();
+                    double lon = location.getLongitude();
+                    // Dodanie lokalizacji i linku do Google Maps [cite: 18, 52]
+                    sb.append("\nLokalizacja: (").append(lat).append(", ").append(lon).append(")");
+                    sb.append("\nLink: https://maps.google.com/?q=lat,lng").append(lat).append(",").append(lon);
+                }
 
-                    if (location != null) {
-                        double lat = location.getLatitude();
-                        double lng = location.getLongitude();
-                        locationText = "Lat: " + lat + ", Lng: " + lng;
-                        // Link do map Google [cite: 54]
-                        mapLink = "http://maps.google.com/?q=" + lat + "," + lng;
-                    }
-
-                    sendSmsIntent(locationText, mapLink);
-                });
-    }
-
-    private void sendSmsIntent(String locationInfo, String mapLink) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Lista sensorów:\n");
-        for (Sensor s : sensorList) {
-            sb.append("- ").append(s.getName()).append("\n");
-        }
-        sb.append("\nMoja lokalizacja:\n").append(locationInfo);
-        if (!mapLink.isEmpty()) {
-            sb.append("\nMapa: ").append(mapLink);
-        }
-
-        // Wysyłanie przez Intent [cite: 53, 90]
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("smsto:"));
-        intent.putExtra("sms_body", sb.toString());
-
-        try {
-            startActivity(intent);
-        } catch (Exception e) {
-            Toast.makeText(this, "Nie znaleziono aplikacji SMS", Toast.LENGTH_SHORT).show();
+                // Wysyłanie przez Intent [cite: 17, 54]
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("smsto:"));
+                intent.putExtra("sms_body", sb.toString());
+                startActivity(intent);
+            });
         }
     }
 }

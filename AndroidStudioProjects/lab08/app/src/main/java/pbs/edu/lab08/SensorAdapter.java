@@ -8,44 +8,42 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import java.util.List;
 
 public class SensorAdapter extends ArrayAdapter<Sensor> {
-
-    public SensorAdapter(@NonNull Context context, List<Sensor> sensors) {
+    public SensorAdapter(Context context, List<Sensor> sensors) {
         super(context, 0, sensors);
     }
 
-    @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_sensor, parent, false);
         }
 
         Sensor sensor = getItem(position);
-        TextView tvName = convertView.findViewById(R.id.tvSensorName);
-        ImageView imgIcon = convertView.findViewById(R.id.imgSensorIcon);
+        TextView nameText = convertView.findViewById(R.id.sensorName);
+        ImageView iconImage = convertView.findViewById(R.id.sensorIcon);
 
-        if (sensor != null) {
-            tvName.setText(sensor.getName());
+        nameText.setText(sensor.getName());
 
-            // Prosta logika doboru ikon (możesz rozwinąć case'y zgodnie z tabelą w PDF)
-            // Używam domyślnej ikony, aby kod był czytelny, ale tu jest miejsce na Twój switch.
-            switch (sensor.getType()) {
-                case Sensor.TYPE_ACCELEROMETER:
-                    // imgIcon.setImageResource(R.drawable.ic_movement);
-                    break;
-                case Sensor.TYPE_GYROSCOPE:
-                    // imgIcon.setImageResource(R.drawable.ic_rotation);
-                    break;
-                // ... reszta case'ów
-                default:
-                    imgIcon.setImageResource(R.drawable.ic_sensor); // Domyślna ikona
-                    break;
-            }
+        // Wybór ikonki na podstawie typu sensora [cite: 22]
+        switch (sensor.getType()) {
+            case Sensor.TYPE_ACCELEROMETER:
+                iconImage.setImageResource(android.R.drawable.ic_menu_directions);
+                break;
+            case Sensor.TYPE_GYROSCOPE:
+                iconImage.setImageResource(android.R.drawable.ic_menu_rotate);
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                iconImage.setImageResource(android.R.drawable.ic_menu_compass);
+                break;
+            case Sensor.TYPE_LIGHT:
+                iconImage.setImageResource(android.R.drawable.ic_menu_day);
+                break;
+            default:
+                iconImage.setImageResource(android.R.drawable.ic_menu_info_details);
+                break;
         }
         return convertView;
     }
